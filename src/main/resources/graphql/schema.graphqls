@@ -1,0 +1,67 @@
+# Définition du schéma GraphQL
+enum TypeCompte {
+    COURANT
+    EPARGNE
+}
+
+enum TypeTransaction {
+    DEBIT
+    CREDIT
+}
+
+type Query {
+    allComptes: [Compte]
+    compteById(id : ID):Compte
+    totalSolde: SoldeStats
+    compteByType(type: TypeCompte): [Compte]
+    deleteCompte(id: ID): Boolean
+    compteTransactions(id: ID): [Transaction]
+    transactionState(id: ID!): TransactionState!
+}
+
+type Compte {
+    id: ID
+    solde: Float
+    dateCreation: String
+    type: TypeCompte
+}
+
+type Mutation {
+    saveCompte(compte:CompteRequest):Compte
+    addTransaction(transactionRequest:TransactionRequest):Transaction
+}
+
+input CompteRequest{
+    id: ID
+    solde: Float
+    dateCreation: String
+    type: TypeCompte
+
+}
+
+input TransactionRequest{
+    idCompte: ID
+    montant: Float
+    date: String
+    typeTransaction: TypeTransaction
+}
+
+type Transaction {
+    id: ID
+    montant: Float
+    dateTransaction: String
+    typeTransaction: TypeTransaction
+    compte: Compte
+}
+
+# Définition du type SoldeStats
+type SoldeStats {
+    count: Int    # Nombre total de comptes
+    sum: Float    # Somme des soldes
+    average: Float # Moyenne des soldes
+}
+type TransactionState {
+    count: Int
+    sumDebit: Float
+    sumCredit: Float
+}
